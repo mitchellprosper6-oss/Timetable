@@ -1,5 +1,5 @@
 /* Command Center service worker — offline shell cache */
-const CACHE = "cc-v3";
+const CACHE = "cc-v4";
 const ASSETS = ["./","./index.html","./manifest.json","./icon-192.png","./icon-512.png"];
 
 self.addEventListener("install", e => {

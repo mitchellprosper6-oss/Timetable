@@ -233,6 +233,11 @@
         <option value="chill">Chill / extra</option>
       </select></div>
     </div>
+    <div class="fld"><label>Week</label><select id="mWeek">
+      <option value="">Every week</option>
+      <option value="0">Week A only</option>
+      <option value="1">Week B only</option>
+    </select></div>
     <div class="mrow">
       <button class="mbtn del" id="mDelete">Delete</button>
       <button class="mbtn" id="mCancel">Cancel</button>
@@ -246,8 +251,8 @@
 
 const TAGS={
   py :{name:"Python",   c:"#5aa0d8"},
-  cpp:{name:"C / C++",  c:"#cf8350"},
-  cs :{name:"Comp Sci", c:"#7e9bd6"},
+  c  :{name:"C",        c:"#cf8350"},
+  cpp:{name:"C++",      c:"#e0996a"},
   ml :{name:"ML / Maths",c:"#54b39a"},
   git:{name:"Git",      c:"#93a0b5"},
   dsn:{name:"Design",   c:"#b585cc"},
@@ -256,73 +261,86 @@ const TAGS={
   meal:{name:"Meal",    c:"#4a5a68"},
   chill:{name:"Chill",  c:"#556370"}
 };
-const STUDY=["py","cpp","cs","ml","git","dsn","sk"];
+const STUDY=["py","c","cpp","ml","git","dsn","sk"];
 const DAY_NAMES=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const DAY_FULL=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const TYPE_LABEL={focus:"Focus",draw:"Drawing",move:"Gym",meal:"Break",chill:"Chill"};
+const WEEK_LABELS=["Week A","Week B"];
 
-/* ---- reworked default week: no work · 06:00 start · gym Mon/Tue/Wed/Fri/Sat ---- */
+/* ---- reworked default week: one main subject a day, on a repeating 2-week
+   rotation (Python/C/C++/ML·Maths) · Drawing every day at the same time in
+   the evening · Design & Git as ~2h/week add-ons late in the day only ·
+   gym (Mon/Tue/Wed/Fri/Sat) and chill/stretch times unchanged ---- */
 function seedBlocks(){
   const B=[];
+  const push=(w,d,s,e,tag,lab,ty)=>B.push({w,d,s,e,tag,lab,ty});
   const gymDays=[0,1,2,4,5];
-  const push=(d,s,e,tag,lab,ty)=>B.push({d,s,e,tag,lab,ty});
 
-  // rotation of study tags for the 4 daily focus blocks
-  const plan={
-    0:["cpp","py","cs","dsn"],
-    1:["cpp","py","ml","dsn"],
-    2:["cpp","py","cs","ml"],
-    4:["cpp","py","ml","dsn"],
-    5:["cpp","py","cs","dsn"]
+  // main subject for each day, alternating week A (0) / week B (1)
+  const MAIN={
+    0:{0:"py",1:"c",2:"cpp",3:"ml",4:"py",5:"c",6:"cpp"},
+    1:{0:"ml",1:"py",2:"c",3:"cpp",4:"ml",5:"py",6:"c"}
   };
+  // supplementary add-on (same every week) — Design & Git, ~2h/week each
+  const ADDON={1:"dsn",2:"git",4:"dsn",5:"git"};
+
   gymDays.forEach(d=>{
-    const p=plan[d];
-    push(d,"06:00","08:00","gym","Gym / Run","move");
-    push(d,"08:00","08:45","meal","Breakfast","meal");
-    push(d,"09:00","10:30",p[0],TAGS[p[0]].name,"focus");
-    push(d,"10:45","12:15",p[1],TAGS[p[1]].name,"focus");
-    push(d,"12:15","13:15","meal","Lunch","meal");
-    push(d,"13:30","15:00",p[2],TAGS[p[2]].name,"focus");
-    push(d,"15:15","16:15","sk","Drawing","draw");
-    push(d,"16:30","17:30",p[3],TAGS[p[3]].name,"focus");
-    push(d,"17:30","18:30","meal","Dinner","meal");
-    push(d,"18:30","20:00","chill","Chill / stretch / extra","chill");
+    push(null,d,"06:00","08:00","gym","Gym / Run","move");
+    push(null,d,"08:00","08:45","meal","Breakfast","meal");
+    [0,1].forEach(w=>{
+      const tag=MAIN[w][d];
+      push(w,d,"09:00","10:30",tag,TAGS[tag].name,"focus");
+      push(w,d,"10:45","12:15",tag,TAGS[tag].name,"focus");
+      push(w,d,"13:30","15:00",tag,TAGS[tag].name,"focus");
+    });
+    push(null,d,"12:15","13:15","meal","Lunch","meal");
+    if(ADDON[d])push(null,d,"15:15","16:15",ADDON[d],TAGS[ADDON[d]].name,"focus");
+    push(null,d,"16:15","17:15","sk","Drawing","draw");
+    push(null,d,"17:30","18:30","meal","Dinner","meal");
+    push(null,d,"18:30","20:00","chill","Chill / stretch / extra","chill");
   });
 
   // Thursday — no gym, full study day
-  push(3,"06:00","07:15","cpp","C / C++","focus");
-  push(3,"07:15","08:00","meal","Breakfast","meal");
-  push(3,"08:15","09:45","py","Python","focus");
-  push(3,"10:00","11:30","cs","Comp Sci","focus");
-  push(3,"11:30","12:30","meal","Lunch","meal");
-  push(3,"12:45","14:15","ml","ML / Maths","focus");
-  push(3,"14:30","15:30","sk","Drawing","draw");
-  push(3,"15:45","17:15","dsn","Design","focus");
-  push(3,"17:30","18:30","meal","Dinner","meal");
-  push(3,"18:30","20:00","chill","Chill / stretch / extra","chill");
+  [0,1].forEach(w=>{
+    const tag=MAIN[w][3];
+    push(w,3,"06:00","07:15",tag,TAGS[tag].name,"focus");
+    push(w,3,"08:15","09:45",tag,TAGS[tag].name,"focus");
+    push(w,3,"10:00","11:30",tag,TAGS[tag].name,"focus");
+    push(w,3,"12:45","14:15",tag,TAGS[tag].name,"focus");
+  });
+  push(null,3,"07:15","08:00","meal","Breakfast","meal");
+  push(null,3,"11:30","12:30","meal","Lunch","meal");
+  if(ADDON[3])push(null,3,"15:15","16:15",ADDON[3],TAGS[ADDON[3]].name,"focus");
+  push(null,3,"16:15","17:15","sk","Drawing","draw");
+  push(null,3,"17:30","18:30","meal","Dinner","meal");
+  push(null,3,"18:30","20:00","chill","Chill / stretch / extra","chill");
 
-  // Sunday — no gym, lighter + review
-  push(6,"06:00","07:15","cpp","C / C++","focus");
-  push(6,"07:15","08:00","meal","Breakfast","meal");
-  push(6,"08:15","09:15","py","Python","focus");
-  push(6,"09:30","10:30","git","Git","focus");
-  push(6,"12:00","13:00","meal","Lunch","meal");
-  push(6,"13:15","14:30","sk","Drawing","draw");
-  push(6,"17:30","18:30","meal","Dinner","meal");
-  push(6,"18:30","20:00","chill","Chill / stretch / extra","chill");
+  // Sunday — no gym, lighter day
+  [0,1].forEach(w=>{
+    const tag=MAIN[w][6];
+    push(w,6,"06:00","07:15",tag,TAGS[tag].name,"focus");
+    push(w,6,"08:15","09:15",tag,TAGS[tag].name,"focus");
+  });
+  push(null,6,"07:15","08:00","meal","Breakfast","meal");
+  push(null,6,"12:00","13:00","meal","Lunch","meal");
+  if(ADDON[6])push(null,6,"15:15","16:15",ADDON[6],TAGS[ADDON[6]].name,"focus");
+  push(null,6,"16:15","17:15","sk","Drawing","draw");
+  push(null,6,"17:30","18:30","meal","Dinner","meal");
+  push(null,6,"18:30","20:00","chill","Chill / stretch / extra","chill");
 
   return B.map((b,i)=>Object.assign({id:"b"+i},b));
 }
 
 /* ---- state ---- */
-const KEY="cc_app_v3", OLDS=["cc_app_v2","cc_sched_v1"];
-let S={view:"timetable",day:todayIdx(),blocks:seedBlocks(),done:{},sessions:[],tag:"py",preset:50,mode:"focus"};
+const KEY="cc_app_v4", OLDS=["cc_app_v3","cc_app_v2","cc_sched_v1"];
+let S={view:"timetable",day:todayIdx(),week:weekParity(),blocks:seedBlocks(),done:{},sessions:[],tag:"py",preset:50,mode:"focus"};
 function load(){
   try{
     const r=localStorage.getItem(KEY);
     if(r){ const p=JSON.parse(r);
       if(p.blocks&&p.blocks.length)S.blocks=p.blocks;
       S.done=p.done||{}; S.sessions=p.sessions||[]; S.tag=p.tag||"py"; S.preset=p.preset||50; S.view=p.view||"timetable";
+      S.week=weekParity();
       return;
     }
     for(let i=0;i<OLDS.length;i++){            // carry logged time over from an older version
@@ -343,6 +361,8 @@ function p2(n){ return (n<10?"0":"")+n; }
 function dstr(dt){ return dt.getFullYear()+"-"+p2(dt.getMonth()+1)+"-"+p2(dt.getDate()); }
 function todayStr(){ return dstr(new Date()); }
 function mondayThisWeek(){ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-((d.getDay()+6)%7)); return d; }
+function weekParity(){ const anchor=new Date(2024,0,1); anchor.setDate(anchor.getDate()-((anchor.getDay()+6)%7));
+  const diffDays=Math.round((mondayThisWeek()-anchor)/86400000); return ((Math.round(diffDays/7)%2)+2)%2; }
 function weekDates(){ const m=mondayThisWeek(); return Array.from({length:7},(_,i)=>{const x=new Date(m);x.setDate(m.getDate()+i);return dstr(x);}); }
 function mins(t){ const[h,m]=t.split(":").map(Number); return h*60+m; }
 function dur(s,e){ let d=mins(e)-mins(s); if(d<0)d+=1440; return d; }
@@ -358,7 +378,7 @@ function minutesToday(){ const t=todayStr(); return S.sessions.filter(x=>x.d===t
 function weekSessions(){ const set=new Set(weekDates()); return S.sessions.filter(x=>set.has(x.d)); }
 function minutesWeek(){ return weekSessions().reduce((a,x)=>a+x.min,0); }
 function loggedPerTag(){ const o={}; weekSessions().forEach(x=>o[x.tag]=(o[x.tag]||0)+x.min); return o; }
-function plannedPerTag(){ const o={}; S.blocks.forEach(b=>{ if(STUDY.indexOf(b.tag)<0)return; o[b.tag]=(o[b.tag]||0)+dur(b.s,b.e); }); return o; }
+function plannedPerTag(){ const wp=weekParity(); const o={}; S.blocks.forEach(b=>{ if(STUDY.indexOf(b.tag)<0)return; if(b.w!=null&&b.w!==wp)return; o[b.tag]=(o[b.tag]||0)+dur(b.s,b.e); }); return o; }
 function lastNDates(n){ const out=[],d=new Date(); d.setHours(0,0,0,0);
   for(let i=0;i<n;i++){const x=new Date(d);x.setDate(d.getDate()-i);out.push(dstr(x));} return out; }
 function drawStreak(){
@@ -388,15 +408,19 @@ function render(){
 
 /* ---- timetable ---- */
 function renderTimetable(){
-  const wd=weekDates(),today=todayIdx();
-  let h=`<div class="days">`;
+  const wd=weekDates(),today=todayIdx(),curWeek=weekParity();
+  let h=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+    <span class="eyebrow">${WEEK_LABELS[S.week]}${S.week===curWeek?" · this week":""} · repeats every 2 weeks</span>
+    <span class="lg" data-toggle-week="1" style="cursor:pointer;border:1px solid var(--line);padding:4px 9px;border-radius:20px">⇄ swap</span>
+  </div>`;
+  h+=`<div class="days">`;
   for(let i=0;i<7;i++){
-    h+=`<div class="day ${i===S.day?"sel":""} ${i===today?"today":""}" data-day="${i}" role="button" tabindex="0">
+    h+=`<div class="day ${i===S.day?"sel":""} ${i===today&&S.week===curWeek?"today":""}" data-day="${i}" role="button" tabindex="0">
         <div class="dn">${DAY_NAMES[i]}</div><div class="dd">${wd[i].slice(8)}</div></div>`;
   }
   h+=`</div>`;
   const date=wd[S.day];
-  const blocks=S.blocks.filter(b=>b.d===S.day).sort((a,b)=>mins(a.s)-mins(b.s));
+  const blocks=S.blocks.filter(b=>b.d===S.day&&(b.w==null||b.w===S.week)).sort((a,b)=>mins(a.s)-mins(b.s));
   const study=blocks.filter(b=>STUDY.indexOf(b.tag)>=0).reduce((a,b)=>a+dur(b.s,b.e),0);
   h+=`<div class="dayhdr"><div class="t">${DAY_FULL[S.day]}${S.day===today?" · today":""}</div><div class="d">${fmtDur(study)} study</div></div>`;
 
@@ -532,17 +556,20 @@ function tagOpts(sel){ return Object.keys(TAGS).map(k=>`<option value="${k}" ${k
 function openEdit(id){ editing=id; const b=S.blocks.find(z=>z.id===id); if(!b)return;
   $("#mTitle").textContent="Edit block"; $("#mDelete").style.display="";
   $("#mStart").value=b.s; $("#mEnd").value=b.e; $("#mLabel").value=b.lab;
-  $("#mTag").innerHTML=tagOpts(b.tag); $("#mType").value=b.ty; $("#ov").classList.add("show"); }
+  $("#mTag").innerHTML=tagOpts(b.tag); $("#mType").value=b.ty; $("#mWeek").value=b.w==null?"":String(b.w);
+  $("#ov").classList.add("show"); }
 function openAdd(){ editing=null; $("#mTitle").textContent="Add block · "+DAY_FULL[S.day]; $("#mDelete").style.display="none";
   $("#mStart").value="09:00"; $("#mEnd").value="10:30"; $("#mLabel").value="";
-  $("#mTag").innerHTML=tagOpts("py"); $("#mType").value="focus"; $("#ov").classList.add("show"); }
+  $("#mTag").innerHTML=tagOpts("py"); $("#mType").value="focus"; $("#mWeek").value=String(S.week);
+  $("#ov").classList.add("show"); }
 function closeModal(){ $("#ov").classList.remove("show"); }
 function saveModal(){
   const s=$("#mStart").value||"09:00", e=$("#mEnd").value||"10:00";
   const tag=$("#mTag").value, ty=$("#mType").value;
   const lab=($("#mLabel").value||"").trim()||TAGS[tag].name;
-  if(editing){ const b=S.blocks.find(z=>z.id===editing); if(b)Object.assign(b,{s,e,lab,tag,ty}); }
-  else S.blocks.push({id:"b"+Date.now()+Math.floor(Math.random()*99),d:S.day,s,e,lab,tag,ty});
+  const wv=$("#mWeek").value, w=wv===""?null:+wv;
+  if(editing){ const b=S.blocks.find(z=>z.id===editing); if(b)Object.assign(b,{s,e,lab,tag,ty,w}); }
+  else S.blocks.push({id:"b"+Date.now()+Math.floor(Math.random()*99),d:S.day,w,s,e,lab,tag,ty});
   save(); closeModal(); render();
 }
 function delBlock(){ if(!editing)return; S.blocks=S.blocks.filter(z=>z.id!==editing); save(); closeModal(); render(); }
@@ -552,6 +579,7 @@ document.addEventListener("click",e=>{
   const t=e.target;
   const nv=t.closest(".nv"); if(nv){ S.view=nv.dataset.view; save(); render(); window.scrollTo({top:0}); return; }
   const day=t.closest("[data-day]"); if(day){ S.day=+day.dataset.day; render(); return; }
+  const wk=t.closest("[data-toggle-week]"); if(wk){ S.week=S.week===0?1:0; render(); return; }
   const ed=t.closest("[data-edit]"); if(ed){ openEdit(ed.dataset.edit); return; }
   if(t.closest("[data-add]")){ openAdd(); return; }
   const tg=t.closest("[data-toggle]"); if(tg){ const k=weekDates()[S.day]+"|"+tg.dataset.toggle;

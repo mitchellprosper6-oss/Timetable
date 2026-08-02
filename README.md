@@ -38,25 +38,40 @@ Replace the file in the repo, then **bump the cache name** in `sw.js` (`cc-v3` �
 
 ## The default week
 
+One main subject a day — no more splitting focus across three or four topics. The plan repeats on a **2-week cycle** (Week A / Week B, shown and swappable at the top of the Schedule tab) so Python, C, C++ and ML/Maths all get fair rotation without cramming everything into one week.
+
 | | |
 |---|---|
 | Day starts | 06:00, every day |
-| Gym / run | 06:00–08:00 — Mon, Tue, Wed, Fri, Sat |
-| Meals | Breakfast, lunch, dinner — built in as breaks |
-| Drawing | Every single day |
-| Chill / stretch / extra | 18:30–20:00, every day |
+| Gym / run | 06:00–08:00 — Mon, Tue, Wed, Fri, Sat (unchanged) |
+| Main subject | 3 deep-work blocks (gym days) or 4 (Thursday) or 2 (Sunday, light day) — one subject only, alternates by week |
+| Add-on (Design / Git) | 15:15–16:15, only on Tue/Fri (Design) and Wed/Sat (Git) — minor, supplementary, same every week |
+| Drawing | 16:15–17:15, **every day, same time**, towards the evening |
+| Meals | Breakfast, lunch, dinner — built in as breaks, times unchanged |
+| Chill / stretch / extra | 18:30–20:00, every day (unchanged) |
 
-Weekly split:
+Main-subject rotation (repeats every 2 weeks):
 
-| Skill | Hours |
+| Day | Week A | Week B |
+|---|---|---|
+| Mon | Python | ML / Maths |
+| Tue | C | Python |
+| Wed | C++ | C |
+| Thu | ML / Maths | C++ |
+| Fri | Python | ML / Maths |
+| Sat | C | Python |
+| Sun | C++ | C |
+
+Weekly split (approx., averaged across the 2-week cycle):
+
+| Skill | Hours/week |
 |---|---|
-| C / C++ | 10.00 |
-| Python | 10.00 |
-| Drawing | 7.25 |
-| Comp Sci | 6.00 |
-| ML / Maths | 5.50 |
-| Design | 5.50 |
-| Git | 1.00 |
-| **Total** | **45.25** |
+| Python | ~10.5 |
+| C | ~10.5 |
+| C++ | ~9.0 |
+| ML / Maths | ~9.0 |
+| Drawing | 7.00 |
+| Design | 2.00 |
+| Git | 2.00 |
 
-Thursday runs longest at 8.25 hours since there's no gym; Sunday is the light day at 4.5. Every block is editable, so trim it to what you can actually hold.
+Comp Sci has been removed entirely, and C / C++ are now tracked as separate subjects. Design and Git are add-ons only — small, late-in-the-day blocks, not full study sessions. Every block is editable (and can be set to "Every week", "Week A only", or "Week B only"), so trim it to what you can actually hold.
