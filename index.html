@@ -285,48 +285,59 @@ function seedBlocks(){
   const ADDON={1:"dsn",2:"git",4:"dsn",5:"git"};
 
   gymDays.forEach(d=>{
+    const hasAddon=!!ADDON[d];
     push(null,d,"06:00","08:00","gym","Gym / Run","move");
     push(null,d,"08:00","08:45","meal","Breakfast","meal");
-    [0,1].forEach(w=>{
-      const tag=MAIN[w][d];
-      push(w,d,"09:00","10:30",tag,TAGS[tag].name,"focus");
-      push(w,d,"10:45","12:15",tag,TAGS[tag].name,"focus");
-      push(w,d,"13:30","15:00",tag,TAGS[tag].name,"focus");
-    });
     push(null,d,"12:15","13:15","meal","Lunch","meal");
-    if(ADDON[d])push(null,d,"15:15","16:15",ADDON[d],TAGS[ADDON[d]].name,"focus");
+    if(hasAddon)push(null,d,"15:15","16:15",ADDON[d],TAGS[ADDON[d]].name,"focus");
     push(null,d,"16:15","17:15","sk","Drawing","draw");
     push(null,d,"17:30","18:30","meal","Dinner","meal");
     push(null,d,"18:30","20:00","chill","Chill / stretch / extra","chill");
+    [0,1].forEach(w=>{
+      const tag=MAIN[w][d],nm=TAGS[tag].name;
+      push(w,d,"08:45","10:30",tag,nm,"focus");
+      push(w,d,"10:30","12:15",tag,nm,"focus");
+      if(hasAddon){
+        push(w,d,"13:15","15:15",tag,nm,"focus");
+      }else{
+        push(w,d,"13:15","14:45",tag,nm,"focus");
+        push(w,d,"14:45","16:15",tag,nm,"focus");
+      }
+      push(w,d,"17:15","17:30",tag,nm,"focus");
+    });
   });
 
   // Thursday — no gym, full study day
-  [0,1].forEach(w=>{
-    const tag=MAIN[w][3];
-    push(w,3,"06:00","07:15",tag,TAGS[tag].name,"focus");
-    push(w,3,"08:15","09:45",tag,TAGS[tag].name,"focus");
-    push(w,3,"10:00","11:30",tag,TAGS[tag].name,"focus");
-    push(w,3,"12:45","14:15",tag,TAGS[tag].name,"focus");
-  });
   push(null,3,"07:15","08:00","meal","Breakfast","meal");
   push(null,3,"11:30","12:30","meal","Lunch","meal");
-  if(ADDON[3])push(null,3,"15:15","16:15",ADDON[3],TAGS[ADDON[3]].name,"focus");
   push(null,3,"16:15","17:15","sk","Drawing","draw");
   push(null,3,"17:30","18:30","meal","Dinner","meal");
   push(null,3,"18:30","20:00","chill","Chill / stretch / extra","chill");
-
-  // Sunday — no gym, lighter day
   [0,1].forEach(w=>{
-    const tag=MAIN[w][6];
-    push(w,6,"06:00","07:15",tag,TAGS[tag].name,"focus");
-    push(w,6,"08:15","09:15",tag,TAGS[tag].name,"focus");
+    const tag=MAIN[w][3],nm=TAGS[tag].name;
+    push(w,3,"06:00","07:15",tag,nm,"focus");
+    push(w,3,"08:00","09:45",tag,nm,"focus");
+    push(w,3,"09:45","11:30",tag,nm,"focus");
+    push(w,3,"12:30","14:15",tag,nm,"focus");
+    push(w,3,"14:15","16:15",tag,nm,"focus");
+    push(w,3,"17:15","17:30",tag,nm,"focus");
   });
+
+  // Sunday — no gym
   push(null,6,"07:15","08:00","meal","Breakfast","meal");
   push(null,6,"12:00","13:00","meal","Lunch","meal");
-  if(ADDON[6])push(null,6,"15:15","16:15",ADDON[6],TAGS[ADDON[6]].name,"focus");
   push(null,6,"16:15","17:15","sk","Drawing","draw");
   push(null,6,"17:30","18:30","meal","Dinner","meal");
   push(null,6,"18:30","20:00","chill","Chill / stretch / extra","chill");
+  [0,1].forEach(w=>{
+    const tag=MAIN[w][6],nm=TAGS[tag].name;
+    push(w,6,"06:00","07:15",tag,nm,"focus");
+    push(w,6,"08:00","10:00",tag,nm,"focus");
+    push(w,6,"10:00","12:00",tag,nm,"focus");
+    push(w,6,"13:00","14:45",tag,nm,"focus");
+    push(w,6,"14:45","16:15",tag,nm,"focus");
+    push(w,6,"17:15","17:30",tag,nm,"focus");
+  });
 
   return B.map((b,i)=>Object.assign({id:"b"+i},b));
 }
