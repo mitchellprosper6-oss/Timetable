@@ -1,6 +1,6 @@
 {
-  "name": "Command Center",
-  "short_name": "Command",
+  "name": "Timetable",
+  "short_name": "Timetable",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

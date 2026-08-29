@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <meta name="color-scheme" content="dark">
-<title>Command Center</title>
+<title>Timetable</title>
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Command Center">
+<meta name="apple-mobile-web-app-title" content="Timetable">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAEV0lEQVR42u3dv24TWRSA8Rsr21FEokHIkhvXW7mmSkFFATwEBRJo5SKPkMJFkCgoeAUoUlEjSqqt3URarSIkJHo3W8wyghnbGWfGk/G5v69K7DN/PPfzuXd8Zu4cjWenCVjHcUrpxz/LhtEn46ngfIJHvh8gB8gBcoAcIAfIAXKAHCAHyAGQA+RAe46U7LEJJXvBuhUYc4AcIAfIAXLgAE9l2/Pk/JNDOSguzx7LHBh85lhrqx+U7iS4wywuc4AcIAfIgb4GpCfjafMFtgTX3+pqzYJ3Dd6pmbbJ0dUouvKWc4o7DN60uJI9jDlADpAD5AA5QA6QA+QAyAFygBwd8uLNx7MPfzsO5MANKNm3iley/229sUv2az/IwPdZyR7GHCAHyAFygBwgB0AOkAPkADlADpADg0bJvlW8kv1v61WyP4gPqGSP/XcrObNcTH79933txen8ihxZO9EkMkNLjjN3otLkZx+qL5aLZGjJcZ5aNG/gMrJiSQ6KHGdlRpsWrViyXExmF+Q4eC1W3X7Ri1UtF5Ovr1cpTQKnkJGE0UkiIcdBmjG7+GNPmyjXHNWPUWAzpvOrfef8chMh/RgFNqO3LUb1Y8QMfmQhxxDaJpIfwUr2q2KcWHm3n5L97CJ9fb3asriSfdPgndbcJHhTh9JnyX46///3j5a7oWQfYagRe/Dheg6ElmNolbAwyUPmADmQoRzDvLoiRs8ic4AcyE2OIV+xF6BnkTlADpAD5EAfHI1np+3X8ujl25TS57cvb7HsizcfNcMm3r162mdbVBhKyR5NDmnzRumkZH/3962cP/sz3fYKhiansjutuXgST7FLLb8qld3b97QRxhwgB8gBcuyRIf9EHeBmfJkD5ECGcgyzZ4kxwYvMAXIgTzmG1rOEmTRM5kB0OYaTPCLNNRjnLvviJvflYlKf56m3ifGLu+zrt/n3fzTcZV9nUrTQr1/c3u6yL/PW2sXdZT+IzsU+GHMMa/ARclrjgGcr/fsRdcLrmDMYT+dXy8WkaLO9TkIde7b8sNNbF378HJ92sMIvf92rvPLg4ar44/rf7/V3a1yndK/x1loEf3ueUrrUrTQcG+6ji3nw8H5pRtQDGHxi/On86mQ8LX7/6Cr556BFFnJUupg2Q4TSiUzMSPk8jKdyCtPcknqXlIMWecmxaRRy4wMAM3QiUzluMVYtIxucj5AjqCUF9QcA5ozrObA1c3iWfbP46wNqVyX77oPXfpCfHNKYQ8kexhwgB8gBcoAcIAfIAZAD5AA5QA6QA0NByb55vJL9TZtUsj8IlOyx/24FJe9ePfUYEJkD5AA5QA6QA+QAOUAOkAPkAMiBzSjZNw9Wsr9pk7FL9luDlewBcoAcaDcg7Yon558iH6pvz2UOoNPMcXn2+DBPQHYIvgzxAWUOkAPkADlADpAD5EBkjsazU0cBa+myZC84WLBuBeQAOUAOkAPkADlADpAD5AA5AHKAHOiA/wAntjhumQ7b2wAAAABJRU5ErkJggg==">
 <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAEV0lEQVR42u3dv24TWRSA8Rsr21FEokHIkhvXW7mmSkFFATwEBRJo5SKPkMJFkCgoeAUoUlEjSqqt3URarSIkJHo3W8wyghnbGWfGk/G5v69K7DN/PPfzuXd8Zu4cjWenCVjHcUrpxz/LhtEn46ngfIJHvh8gB8gBcoAcIAfIAXKAHCAHyAGQA+RAe46U7LEJJXvBuhUYc4AcIAfIAXLgAE9l2/Pk/JNDOSguzx7LHBh85lhrqx+U7iS4wywuc4AcIAfIgb4GpCfjafMFtgTX3+pqzYJ3Dd6pmbbJ0dUouvKWc4o7DN60uJI9jDlADpAD5AA5QA6QA+QAyAFygBwd8uLNx7MPfzsO5MANKNm3iley/229sUv2az/IwPdZyR7GHCAHyAFygBwgB0AOkAPkADlADpADg0bJvlW8kv1v61WyP4gPqGSP/XcrObNcTH79933txen8ihxZO9EkMkNLjjN3otLkZx+qL5aLZGjJcZ5aNG/gMrJiSQ6KHGdlRpsWrViyXExmF+Q4eC1W3X7Ri1UtF5Ovr1cpTQKnkJGE0UkiIcdBmjG7+GNPmyjXHNWPUWAzpvOrfef8chMh/RgFNqO3LUb1Y8QMfmQhxxDaJpIfwUr2q2KcWHm3n5L97CJ9fb3asriSfdPgndbcJHhTh9JnyX46///3j5a7oWQfYagRe/Dheg6ElmNolbAwyUPmADmQoRzDvLoiRs8ic4AcyE2OIV+xF6BnkTlADpAD5EAfHI1np+3X8ujl25TS57cvb7HsizcfNcMm3r162mdbVBhKyR5NDmnzRumkZH/3962cP/sz3fYKhiansjutuXgST7FLLb8qld3b97QRxhwgB8gBcuyRIf9EHeBmfJkD5ECGcgyzZ4kxwYvMAXIgTzmG1rOEmTRM5kB0OYaTPCLNNRjnLvviJvflYlKf56m3ifGLu+zrt/n3fzTcZV9nUrTQr1/c3u6yL/PW2sXdZT+IzsU+GHMMa/ARclrjgGcr/fsRdcLrmDMYT+dXy8WkaLO9TkIde7b8sNNbF378HJ92sMIvf92rvPLg4ar44/rf7/V3a1yndK/x1loEf3ueUrrUrTQcG+6ji3nw8H5pRtQDGHxi/On86mQ8LX7/6Cr556BFFnJUupg2Q4TSiUzMSPk8jKdyCtPcknqXlIMWecmxaRRy4wMAM3QiUzluMVYtIxucj5AjqCUF9QcA5ozrObA1c3iWfbP46wNqVyX77oPXfpCfHNKYQ8kexhwgB8gBcoAcIAfIAZAD5AA5QA6QA0NByb55vJL9TZtUsj8IlOyx/24FJe9ePfUYEJkD5AA5QA6QA+QAOUAOkAPkAMiBzSjZNw9Wsr9pk7FL9luDlewBcoAcaDcg7Yon558iH6pvz2UOoNPMcXn2+DBPQHYIvgzxAWUOkAPkADlADpAD5EBkjsazU0cBa+myZC84WLBuBeQAOUAOkAPkADlADpAD5AA5AHKAHOiA/wAntjhumQ7b2wAAAABJRU5ErkJggg==">
 
@@ -83,6 +83,16 @@
   .dayhdr .t{font-size:15px;font-weight:700}
   .dayhdr .d{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em}
 
+  .daymode{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:10px 11px;margin:0 0 11px}
+  .daymode-copy{min-width:0}
+  .daymode-title{font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--ochre)}
+  .daymode-note{font-size:11px;color:var(--muted);margin-top:3px}
+  .daymode-actions{display:flex;gap:5px;flex:0 0 auto}
+  .modebtn{border:1px solid var(--line-strong);background:#0a151d;color:var(--muted);border-radius:5px;padding:7px 10px;font-family:var(--mono);font-size:10px;cursor:pointer;white-space:nowrap}
+  .modebtn.active{border-color:var(--ochre);background:rgba(208,138,44,.13);color:var(--ochre-bright)}
+  .fixedmode{border-style:dashed}
+  @media(max-width:520px){.daymode{align-items:stretch;flex-direction:column}.daymode-actions{width:100%}.modebtn{flex:1}}
+
   .block{display:flex;border:1px solid var(--line);background:var(--panel);margin-bottom:6px;border-radius:5px;overflow:hidden}
   .block .accent{flex:0 0 5px;background:var(--bk,#5aa0d8)}
   .block .body{flex:1;min-width:0;padding:9px 10px;display:flex;align-items:center;gap:10px;cursor:pointer}
@@ -92,6 +102,7 @@
   .block .lab{font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .block .ty{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:2px}
   .block.meal,.block.chill{opacity:.78}
+  .block.work{background:linear-gradient(90deg,rgba(208,138,44,.08),var(--panel))}
   .block.done{background:rgba(87,176,142,.06)}
   .block.done .lab{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line-strong)}
   .blk-actions{flex:0 0 auto;display:flex;flex-direction:column;border-left:1px solid var(--line)}
@@ -189,7 +200,7 @@
   <header class="titleblock">
     <div class="tb-main">
       <div class="tb-kicker">Weekly Operations</div>
-      <div class="tb-title">COMMAND CENTER</div>
+      <div class="tb-title">TIMETABLE</div>
       <div class="tb-sub" id="nowline">—</div>
     </div>
     <div class="tb-grid">
@@ -229,6 +240,7 @@
         <option value="focus">Focus</option>
         <option value="draw">Drawing</option>
         <option value="move">Gym / run</option>
+        <option value="work">Work / commute</option>
         <option value="meal">Meal / break</option>
         <option value="chill">Chill / extra</option>
       </select></div>
@@ -258,13 +270,14 @@ const TAGS={
   dsn:{name:"Design",   c:"#b585cc"},
   sk :{name:"Drawing",  c:"#d8a23a"},
   gym:{name:"Gym / Run",c:"#6b8f7a"},
+  work:{name:"Work",     c:"#d08a2c"},
   meal:{name:"Meal",    c:"#4a5a68"},
   chill:{name:"Chill",  c:"#556370"}
 };
 const STUDY=["py","c","cpp","ml","git","dsn","sk"];
 const DAY_NAMES=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const DAY_FULL=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-const TYPE_LABEL={focus:"Focus",draw:"Drawing",move:"Gym",meal:"Break",chill:"Chill"};
+const TYPE_LABEL={focus:"Focus",draw:"Drawing",move:"Gym",work:"Work",meal:"Break",chill:"Chill"};
 const WEEK_LABELS=["Week A","Week B"];
 
 /* ---- reworked default week: one main subject a day, on a repeating 2-week
@@ -288,6 +301,7 @@ function seedBlocks(){
     const hasAddon=!!ADDON[d];
     push(null,d,"06:00","08:00","gym","Gym / Run","move");
     push(null,d,"08:00","08:45","meal","Breakfast","meal");
+    if(d===5)push(null,d,"08:45","09:45","sk","Morning drawing","draw");
     push(null,d,"12:15","13:15","meal","Lunch","meal");
     if(hasAddon)push(null,d,"15:15","16:15",ADDON[d],TAGS[ADDON[d]].name,"focus");
     push(null,d,"16:15","17:15","sk","Drawing","draw");
@@ -295,7 +309,7 @@ function seedBlocks(){
     push(null,d,"18:30","20:00","chill","Chill / stretch / extra","chill");
     [0,1].forEach(w=>{
       const tag=MAIN[w][d],nm=TAGS[tag].name;
-      push(w,d,"08:45","10:30",tag,nm,"focus");
+      push(w,d,d===5?"09:45":"08:45","10:30",tag,nm,"focus");
       push(w,d,"10:30","12:15",tag,nm,"focus");
       if(hasAddon){
         push(w,d,"13:15","15:15",tag,nm,"focus");
@@ -325,6 +339,7 @@ function seedBlocks(){
 
   // Sunday — no gym
   push(null,6,"07:15","08:00","meal","Breakfast","meal");
+  push(null,6,"08:00","09:00","sk","Morning drawing","draw");
   push(null,6,"12:00","13:00","meal","Lunch","meal");
   push(null,6,"16:15","17:15","sk","Drawing","draw");
   push(null,6,"17:30","18:30","meal","Dinner","meal");
@@ -332,7 +347,7 @@ function seedBlocks(){
   [0,1].forEach(w=>{
     const tag=MAIN[w][6],nm=TAGS[tag].name;
     push(w,6,"06:00","07:15",tag,nm,"focus");
-    push(w,6,"08:00","10:00",tag,nm,"focus");
+    push(w,6,"09:00","10:00",tag,nm,"focus");
     push(w,6,"10:00","12:00",tag,nm,"focus");
     push(w,6,"13:00","14:45",tag,nm,"focus");
     push(w,6,"14:45","16:15",tag,nm,"focus");
@@ -342,27 +357,42 @@ function seedBlocks(){
   return B.map((b,i)=>Object.assign({id:"b"+i},b));
 }
 
+function ensureWeekendDrawing(blocks){
+  if(!blocks.some(b=>b.d===5&&b.lab==="Morning drawing")){
+    blocks.filter(b=>b.d===5&&b.s==="08:45"&&b.e==="10:30"&&b.ty==="focus").forEach(b=>b.s="09:45");
+    blocks.push({id:"weekend-draw-5",w:null,d:5,s:"08:45",e:"09:45",tag:"sk",lab:"Morning drawing",ty:"draw"});
+  }
+  if(!blocks.some(b=>b.d===6&&b.lab==="Morning drawing")){
+    blocks.filter(b=>b.d===6&&b.s==="08:00"&&b.e==="10:00"&&b.ty==="focus").forEach(b=>b.s="09:00");
+    blocks.push({id:"weekend-draw-6",w:null,d:6,s:"08:00",e:"09:00",tag:"sk",lab:"Morning drawing",ty:"draw"});
+  }
+  return blocks;
+}
+
 /* ---- state ---- */
-const KEY="cc_app_v4", OLDS=["cc_app_v3","cc_app_v2","cc_sched_v1"];
-let S={view:"timetable",day:todayIdx(),week:weekParity(),blocks:seedBlocks(),done:{},sessions:[],tag:"py",preset:50,mode:"focus"};
+const KEY="timetable_app_v5", OLDS=["cc_app_v4","cc_app_v3","cc_app_v2","cc_sched_v1"];
+let S={view:"timetable",day:todayIdx(),week:weekParity(),blocks:seedBlocks(),workDays:{},done:{},sessions:[],tag:"py",preset:50,mode:"focus"};
 function load(){
   try{
     const r=localStorage.getItem(KEY);
     if(r){ const p=JSON.parse(r);
-      if(p.blocks&&p.blocks.length)S.blocks=p.blocks;
-      S.done=p.done||{}; S.sessions=p.sessions||[]; S.tag=p.tag||"py"; S.preset=p.preset||50; S.view=p.view||"timetable";
+      if(p.blocks&&p.blocks.length)S.blocks=ensureWeekendDrawing(p.blocks);
+      S.workDays=p.workDays||{}; S.done=p.done||{}; S.sessions=p.sessions||[]; S.tag=p.tag||"py"; S.preset=p.preset||50; S.view=p.view||"timetable";
       S.week=weekParity();
+      save();
       return;
     }
-    for(let i=0;i<OLDS.length;i++){            // carry logged time over from an older version
+    for(let i=0;i<OLDS.length;i++){            // migrate schedule and logged time from an older version
       const old=localStorage.getItem(OLDS[i]);
       if(old){ const p=JSON.parse(old);
+        if(p.blocks&&p.blocks.length)S.blocks=ensureWeekendDrawing(p.blocks);
         S.sessions=(p.sessions||[]).map(x=>Object.assign({id:uid(),src:"timer",note:""},x));
-        S.done=p.done||{}; break; }
+        S.workDays=p.workDays||{}; S.done=p.done||{}; S.tag=p.tag||"py"; S.preset=p.preset||50; S.view=p.view||"timetable";
+        save(); break; }
     }
   }catch(e){}
 }
-function save(){ try{localStorage.setItem(KEY,JSON.stringify({blocks:S.blocks,done:S.done,sessions:S.sessions,tag:S.tag,preset:S.preset,view:S.view}));}catch(e){} }
+function save(){ try{localStorage.setItem(KEY,JSON.stringify({blocks:S.blocks,workDays:S.workDays,done:S.done,sessions:S.sessions,tag:S.tag,preset:S.preset,view:S.view}));}catch(e){} }
 function uid(){ return "s"+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36); }
 load();
 
@@ -384,12 +414,29 @@ function prettyDate(ds){ const[y,m,d]=ds.split("-").map(Number); const dt=new Da
 
 const $=s=>document.querySelector(s);
 
+/* ---- adaptive work days ---- */
+function regularDayBlocks(day,week){
+  return S.blocks.filter(b=>b.d===day&&(b.w==null||b.w===week)).sort((a,b)=>mins(a.s)-mins(b.s));
+}
+function workDayBlocks(day){
+  return [
+    {id:"work-"+day,d:day,w:null,s:"06:00",e:"15:30",tag:"work",lab:"Work / commute",ty:"work",virtual:true},
+    {id:"work-reset-"+day,d:day,w:null,s:"15:30",e:"16:30",tag:"chill",lab:"Travel / reset",ty:"chill",virtual:true},
+    {id:"work-gym-"+day,d:day,w:null,s:"16:30",e:"18:30",tag:"gym",lab:"Gym / Run",ty:"move",virtual:true},
+    {id:"work-dinner-"+day,d:day,w:null,s:"18:30",e:"19:30",tag:"meal",lab:"Dinner",ty:"meal",virtual:true},
+    {id:"work-evening-"+day,d:day,w:null,s:"19:30",e:"21:00",tag:"chill",lab:"Chill / stretch / extra",ty:"chill",virtual:true}
+  ];
+}
+function effectiveDayBlocks(day,week){
+  return day<5&&S.workDays[day]?workDayBlocks(day):regularDayBlocks(day,week);
+}
+
 /* ---- stats ---- */
 function minutesToday(){ const t=todayStr(); return S.sessions.filter(x=>x.d===t).reduce((a,x)=>a+x.min,0); }
 function weekSessions(){ const set=new Set(weekDates()); return S.sessions.filter(x=>set.has(x.d)); }
 function minutesWeek(){ return weekSessions().reduce((a,x)=>a+x.min,0); }
 function loggedPerTag(){ const o={}; weekSessions().forEach(x=>o[x.tag]=(o[x.tag]||0)+x.min); return o; }
-function plannedPerTag(){ const wp=weekParity(); const o={}; S.blocks.forEach(b=>{ if(STUDY.indexOf(b.tag)<0)return; if(b.w!=null&&b.w!==wp)return; o[b.tag]=(o[b.tag]||0)+dur(b.s,b.e); }); return o; }
+function plannedPerTag(){ const wp=weekParity(),o={}; for(let d=0;d<7;d++)effectiveDayBlocks(d,wp).forEach(b=>{ if(STUDY.indexOf(b.tag)<0)return; o[b.tag]=(o[b.tag]||0)+dur(b.s,b.e); }); return o; }
 function lastNDates(n){ const out=[],d=new Date(); d.setHours(0,0,0,0);
   for(let i=0;i<n;i++){const x=new Date(d);x.setDate(d.getDate()-i);out.push(dstr(x));} return out; }
 function drawStreak(){
@@ -431,25 +478,35 @@ function renderTimetable(){
   }
   h+=`</div>`;
   const date=wd[S.day];
-  const blocks=S.blocks.filter(b=>b.d===S.day&&(b.w==null||b.w===S.week)).sort((a,b)=>mins(a.s)-mins(b.s));
+  const blocks=effectiveDayBlocks(S.day,S.week);
   const study=blocks.filter(b=>STUDY.indexOf(b.tag)>=0).reduce((a,b)=>a+dur(b.s,b.e),0);
-  h+=`<div class="dayhdr"><div class="t">${DAY_FULL[S.day]}${S.day===today?" · today":""}</div><div class="d">${fmtDur(study)} study</div></div>`;
+  const isWork=S.day<5&&!!S.workDays[S.day], dayEnd=blocks.length?blocks[blocks.length-1].e:"—";
+  h+=`<div class="dayhdr"><div class="t">${DAY_FULL[S.day]}${S.day===today?" · today":""}</div><div class="d">${isWork?"work day · ends "+dayEnd:fmtDur(study)+" study"}</div></div>`;
+  if(S.day<5){
+    h+=`<div class="daymode"><div class="daymode-copy"><div class="daymode-title">Day type</div>
+      <div class="daymode-note">${isWork?"Work 06:00–15:30 · travel/reset 15:30 · gym 16:30 · no drawing on work days":"Use the normal study plan, or switch this day when you have work"}</div></div>
+      <div class="daymode-actions"><button class="modebtn ${isWork?"":"active"}" data-work-mode="study" aria-pressed="${isWork?"false":"true"}">Study day</button>
+      <button class="modebtn ${isWork?"active":""}" data-work-mode="work" aria-pressed="${isWork?"true":"false"}">Work day</button></div></div>`;
+  }else{
+    h+=`<div class="daymode fixedmode"><div class="daymode-copy"><div class="daymode-title">Weekend drawing</div><div class="daymode-note">Saturday and Sunday include one extra hour of drawing in the morning.</div></div></div>`;
+  }
 
   blocks.forEach(b=>{
     const t=TAGS[b.tag]||TAGS.chill, done=!!S.done[date+"|"+b.id], can=STUDY.indexOf(b.tag)>=0;
     h+=`<div class="block ${b.ty} ${done?"done":""}" style="--bk:${t.c}">
       <div class="accent"></div>
-      <div class="body" data-edit="${b.id}">
+      <div class="body" ${b.virtual?"":'data-edit="'+b.id+'"'}>
         <div class="time">${b.s}–${b.e}<span class="dur">${fmtDur(dur(b.s,b.e))}</span></div>
         <div class="main"><div class="lab">${esc(b.lab)}</div><div class="ty">${TYPE_LABEL[b.ty]||""}</div></div>
       </div>
       <div class="blk-actions">
         <button class="blk-btn chk" data-toggle="${b.id}" aria-label="Mark done">${done?"✓":"○"}</button>
-        ${can?'<button class="blk-btn go" data-start="'+b.id+'" aria-label="Start focus">▶</button>'
-             :'<button class="blk-btn" data-edit="'+b.id+'" aria-label="Edit">✎</button>'}
+        ${can&&!b.virtual?'<button class="blk-btn go" data-start="'+b.id+'" aria-label="Start focus">▶</button>'
+             :b.virtual?'':'<button class="blk-btn" data-edit="'+b.id+'" aria-label="Edit">✎</button>'}
       </div></div>`;
   });
-  h+=`<button class="addblk" data-add="1">＋ Add block to ${DAY_NAMES[S.day]}</button><div class="legend">`;
+  h+=isWork?`<div class="empty">Switch to Study day to edit this day's normal blocks.</div>`:`<button class="addblk" data-add="1">＋ Add block to ${DAY_NAMES[S.day]}</button>`;
+  h+=`<div class="legend">`;
   STUDY.forEach(k=>h+=`<span class="lg"><i style="background:${TAGS[k].c}"></i>${TAGS[k].name}</span>`);
   h+=`</div>`;
   $("#screen").innerHTML=h;
@@ -591,6 +648,10 @@ document.addEventListener("click",e=>{
   const nv=t.closest(".nv"); if(nv){ S.view=nv.dataset.view; save(); render(); window.scrollTo({top:0}); return; }
   const day=t.closest("[data-day]"); if(day){ S.day=+day.dataset.day; render(); return; }
   const wk=t.closest("[data-toggle-week]"); if(wk){ S.week=S.week===0?1:0; render(); return; }
+  const wm=t.closest("[data-work-mode]"); if(wm&&S.day<5){
+    if(wm.dataset.workMode==="work")S.workDays[S.day]=true; else delete S.workDays[S.day];
+    save(); render(); return;
+  }
   const ed=t.closest("[data-edit]"); if(ed){ openEdit(ed.dataset.edit); return; }
   if(t.closest("[data-add]")){ openAdd(); return; }
   const tg=t.closest("[data-toggle]"); if(tg){ const k=weekDates()[S.day]+"|"+tg.dataset.toggle;
@@ -615,8 +676,8 @@ document.addEventListener("click",e=>{
   if(t.id==="mCancel")closeModal();
   if(t.id==="mDelete")delBlock();
   if(t.id==="ov")closeModal();
-  if(t.id==="resetSched"&&confirm("Reset the timetable to the default week? Logged time is kept.")){ S.blocks=seedBlocks(); save(); render(); }
-  if(t.id==="resetAll"&&confirm("Wipe everything — schedule, logged time, streak?")){ S={view:S.view,day:todayIdx(),blocks:seedBlocks(),done:{},sessions:[],tag:"py",preset:50,mode:"focus"}; resetTimer(); save(); render(); }
+  if(t.id==="resetSched"&&confirm("Reset the timetable to the default week? Logged time is kept.")){ S.blocks=seedBlocks(); S.workDays={}; save(); render(); }
+  if(t.id==="resetAll"&&confirm("Wipe everything — schedule, logged time, streak?")){ S={view:S.view,day:todayIdx(),week:weekParity(),blocks:seedBlocks(),workDays:{},done:{},sessions:[],tag:"py",preset:50,mode:"focus"}; resetTimer(); save(); render(); }
 });
 function syncForm(){ const m=$("#fMin"),d=$("#fDate"),n=$("#fNote");
   if(m&&m.value)F.min=+m.value; if(d&&d.value)F.date=d.value; if(n)F.note=n.value; }
