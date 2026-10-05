@@ -21,7 +21,7 @@ It now opens fullscreen with no browser bars, works with no signal, and keeps it
 
 ## Updating it later
 
-Replace the file in the repo, then **bump the cache name** in `sw.js` (`timetable-v7` → `timetable-v8`) so phones pick up the new version instead of the cached one. Close and reopen the app twice.
+Replace the file in the repo, then **bump the cache name** in `sw.js` (`timetable-v8` → `timetable-v9`) so phones pick up the new version instead of the cached one. Close and reopen the app twice.
 
 ## Notes
 
@@ -30,51 +30,35 @@ Replace the file in the repo, then **bump the cache name** in `sw.js` (`timetabl
 
 ## The three pages
 
-**Schedule** — the week in blocks. Tap a day to switch. Monday to Friday also have a **Study day / Work day** selector. A work day runs from 06:00–15:30, leaves 15:30–16:30 for travel/reset, and moves the two-hour gym block to 16:30; drawing is skipped on work days. Dinner and the evening routine follow with their existing durations. Saturday and Sunday each gain an extra one-hour morning drawing block. Tap a normal block to edit its time, name, skill tag, or type; **＋ Add block** adds a new one. Each block has ○ to tick it done and ▶ to start a focus session on that skill.
+**Schedule** — the week in blocks. Tap a day to switch. Monday to Friday also have a **Uni day / Work day** selector. A work day replaces the whole uni day with a 07:50–15:30 shift (commute either side), keeps drawing at 16:30, adds a one-hour uni catch-up at 19:10 and keeps stretching at 22:10. Timetabled classes show in red with their room. Tap a normal block to edit its time, name, room, skill tag, type or week; **＋ Add block** adds a new one. Each block has ○ to tick it done and ▶ to start a focus session on that skill. One-off dates (deadlines, the mid-term, reading week) show as a note above the day.
 
 **Focus** — pick a skill, pick 25/50/90 minutes (or a 5/10 break), Start. Completing a session logs it automatically. *Log & end* banks the time you've done so far. The bars at the bottom show logged vs planned per skill this week — the dashed mark is the plan, the solid bar is reality.
 
 **Log** — for time you spent away from the timer. Pick the skill, tap a quick amount or type the minutes, set the date, add a note, done. Entries show whether they came from the timer or were added by hand, and feed the same weekly totals.
 
-## The default week
+## The default week (Semester A 2026/27)
 
-One main subject a day — no more splitting focus across three or four topics. The plan repeats on a **2-week cycle** (Week A / Week B, shown and swappable at the top of the Schedule tab) so Python, C, C++ and ML/Maths all get fair rotation without cramming everything into one week. There are no idle gaps: every stretch of the day that isn't gym, a meal, drawing, or a Design/Git add-on is filled with that day's main subject, right up to 20:00.
+Built around the QMplus timetable for BEng DICE Year 1, which **repeats every 2 weeks** (Week A / Week B, shown and swappable at the top of the Schedule tab). Week A is the week starting Mon 5 Oct 2026.
 
-For Monday–Friday, switching the selected day to **Work day** changes only that day. The timetable recalculates instantly, and the Focus page's weekly planned totals update to match the available study time. Switching back restores the normal two-week plan. Work runs 06:00–15:30, travel/reset is 15:30–16:30, gym is 16:30–18:30, dinner is 18:30–19:30, and chill/stretch/extra is 19:30–21:00. Drawing is skipped on work days and bedtime is not changed. To add weekend drawing time without moving the rest of the day, Saturday uses 08:45–09:45 and Sunday uses 08:00–09:00 for morning drawing, replacing one hour of morning study on each day.
+| | Every week | Week A only | Week B only |
+|---|---|---|---|
+| Mon | EMS412U 12:00–14:00 (Great Hall) · EMS403U Studio 15:00–17:00 (Eng 1.12) | | |
+| Tue | EMS430U 09:00–10:00 (Bancroft 1.15) · EMS412U 12:00–13:00 (David Sizer LT) · EMS403U 14:00–16:00 · EMS402U 16:00–18:00 (Bancroft 1.15A) | EMS402U 11:00–12:00 (Engineering 209) | campus study at 11:00 |
+| Wed | EMS402U SEMS lecture 13:00–15:00 (iQ East Court 0.14) | | |
+| Thu | EMS412U 14:00–15:00 (room TBC) | | EMS402U Maker Space 09:00–13:00 (from 29 Oct) |
+| Fri | EMS412U 13:00–14:00 (Bancroft 1.15A) | | |
+
+Around the classes:
 
 | | |
 |---|---|
-| Day starts | 06:00, every day |
-| Gym / run | 06:00–08:00 — Mon, Tue, Wed, Fri, Sat (unchanged) |
-| Main subject | fills the rest of the day around gym/meals/drawing/add-on — one subject only, alternates by week |
-| Add-on (Design / Git) | 15:15–16:15, only on Tue/Fri (Design) and Wed/Sat (Git) — minor, supplementary, same every week |
-| Drawing | Normal days: 16:15–17:15. Saturday adds 08:45–09:45; Sunday adds 08:00–09:00. Skipped on selected work days |
-| Meals | Breakfast, lunch, dinner — built in as breaks, times unchanged |
-| Chill / stretch / extra | 18:30–20:00, every day (unchanged) |
+| Wake / bed | 06:30 / 22:30 (weekends 07:30; Saturday bed 23:00) |
+| Uni self-study | Mornings at home, with a set module per day (~21 h/week incl. weekend catch-up) |
+| Drawing | 2 h every day — evenings on Mon/Tue, afternoons Wed–Fri, mornings at weekends |
+| Gym | Mon 07:20, Wed 17:40, Fri 16:40, Sat 08:30 (90 min incl. travel) |
+| Stretching | Every night, right before bed |
+| Secondary learning | Phase 1: Python (Mon, Wed, Sat build) and ML / Maths (Thu, Fri, Sun) · Git in the Sunday weekly review · none on Tuesdays (9–6 on campus) |
 
-Main-subject rotation (repeats every 2 weeks):
+Week 7 (2–6 Nov) has no timetabled teaching: the app shows a note on those days, but the class blocks stay in place, so ignore them that week. Every block is editable, so adjust it when QMplus changes.
 
-| Day | Week A | Week B |
-|---|---|---|
-| Mon | Python | ML / Maths |
-| Tue | C | Python |
-| Wed | C++ | C |
-| Thu | ML / Maths | C++ |
-| Fri | Python | ML / Maths |
-| Sat | C | Python |
-| Sun | C++ | C |
-
-Weekly split (approx., averaged across the 2-week cycle):
-
-| Skill | Hours/week |
-|---|---|
-| C | ~12.0 |
-| Python | ~11.5 |
-| C++ | ~11.1 |
-| ML / Maths | ~10.6 |
-| Drawing | 9.00 |
-| Design | 2.00 |
-| Git | 2.00 |
-| **Total** | **~58.25 (with no work days selected)** |
-
-Gym-day totals run to 5.75–8.5 hours of main subject on top of the gym session; Thursday (no gym) runs the longest at 8.75 hours of main subject, while Sunday now uses one morning study hour for drawing. Comp Sci has been removed entirely, and C / C++ are now tracked as separate subjects. Design and Git are add-ons only — small, late-in-the-day blocks, not full study sessions. Every normal block is editable (and can be set to "Every week", "Week A only", or "Week B only"), so trim it to what you can actually hold — this is a fully-packed template, not a minimum.
+Updating from an older version keeps your logged time but replaces the schedule with this default week (old block ticks are cleared).

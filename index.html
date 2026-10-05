@@ -103,6 +103,9 @@
   .block .ty{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:2px}
   .block.meal,.block.chill{opacity:.78}
   .block.work{background:linear-gradient(90deg,rgba(208,138,44,.08),var(--panel))}
+  .block.class{background:linear-gradient(90deg,rgba(224,108,108,.10),var(--panel));border-color:rgba(224,108,108,.35)}
+  .block.class .ty{color:#e8a0a0}
+  .datenote{border:1px solid rgba(208,138,44,.45);background:rgba(208,138,44,.10);color:var(--ochre-bright);border-radius:6px;padding:9px 11px;font-size:12px;margin:0 0 11px}
   .block.done{background:rgba(87,176,142,.06)}
   .block.done .lab{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line-strong)}
   .blk-actions{flex:0 0 auto;display:flex;flex-direction:column;border-left:1px solid var(--line)}
@@ -237,14 +240,16 @@
     <div class="fld two">
       <div><label>Tag</label><select id="mTag"></select></div>
       <div><label>Type</label><select id="mType">
+        <option value="class">Class (timetabled)</option>
         <option value="focus">Focus</option>
         <option value="draw">Drawing</option>
-        <option value="move">Gym / run</option>
+        <option value="move">Gym / stretch</option>
         <option value="work">Work / commute</option>
         <option value="meal">Meal / break</option>
         <option value="chill">Chill / extra</option>
       </select></div>
     </div>
+    <div class="fld"><label>Room / location (optional)</label><input type="text" id="mLoc" placeholder="e.g. Bancroft 1.15"></div>
     <div class="fld"><label>Week</label><select id="mWeek">
       <option value="">Every week</option>
       <option value="0">Week A only</option>
@@ -262,6 +267,7 @@
 "use strict";
 
 const TAGS={
+  uni:{name:"Uni",      c:"#e06c6c"},
   py :{name:"Python",   c:"#5aa0d8"},
   c  :{name:"C",        c:"#cf8350"},
   cpp:{name:"C++",      c:"#e0996a"},
@@ -272,111 +278,174 @@ const TAGS={
   gym:{name:"Gym / Run",c:"#6b8f7a"},
   work:{name:"Work",     c:"#d08a2c"},
   meal:{name:"Meal",    c:"#4a5a68"},
-  chill:{name:"Chill",  c:"#556370"}
+  chill:{name:"Chill",  c:"#556370"},
+  str:{name:"Stretch",  c:"#7fb07a"},
+  travel:{name:"Travel",c:"#3e5566"}
 };
-const STUDY=["py","c","cpp","ml","git","dsn","sk"];
+const STUDY=["uni","py","c","cpp","ml","git","dsn","sk"];
 const DAY_NAMES=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const DAY_FULL=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-const TYPE_LABEL={focus:"Focus",draw:"Drawing",move:"Gym",work:"Work",meal:"Break",chill:"Chill"};
+const TYPE_LABEL={class:"Class",focus:"Focus",draw:"Drawing",move:"Gym / stretch",work:"Work",meal:"Break",chill:"Routine"};
 const WEEK_LABELS=["Week A","Week B"];
 
-/* ---- reworked default week: one main subject a day, on a repeating 2-week
-   rotation (Python/C/C++/ML·Maths) · Drawing every day at the same time in
-   the evening · Design & Git as ~2h/week add-ons late in the day only ·
-   gym (Mon/Tue/Wed/Fri/Sat) and chill/stretch times unchanged ---- */
+/* ---- default week (Semester A 2026/27) ----
+   Built around the QMplus timetable for BEng DICE Year 1, which repeats every
+   2 weeks: Week A (w/c 5 Oct, 19 Oct, 16 Nov, 30 Nov) has an extra Tue 11:00
+   EMS402U; Week B (w/c 12 Oct, 26 Oct, 9 Nov, 23 Nov, 7 Dec) has EMS402U Maker
+   Space on Thursday 09:00-13:00 from 29 Oct. Drawing 2h every day, gym Mon AM /
+   Wed / Fri / Sat, stretching every night before bed. Secondary learning
+   (Phase 1: Python + ML/Maths, Git on Sundays) fills the evenings.
+   Row format: [week (null = every week, 0 = A, 1 = B), day (0 = Mon),
+   start, end, tag, label, type, room] ---- */
+const SEED=[
+  [null, 0, "06:30", "07:00", "chill", "Wake up, wash, dress", "chill", ""],
+  [null, 0, "07:00", "07:20", "meal", "Breakfast", "meal", ""],
+  [null, 0, "07:20", "08:50", "gym", "Gym", "move", ""],
+  [null, 0, "08:50", "09:10", "chill", "Shower + snack", "chill", ""],
+  [null, 0, "09:10", "11:20", "uni", "Study: EMS403U studio prep + EMS430U weekly content", "focus", ""],
+  [null, 0, "11:20", "11:40", "travel", "Travel to QMUL", "chill", ""],
+  [null, 0, "11:40", "12:00", "travel", "Arrive + settle", "chill", ""],
+  [null, 0, "12:00", "14:00", "uni", "EMS412U lecture", "class", "People's Palace: Great Hall"],
+  [null, 0, "14:00", "14:45", "meal", "Lunch", "meal", ""],
+  [null, 0, "14:45", "15:00", "travel", "Walk to Design Studio", "chill", ""],
+  [null, 0, "15:00", "17:00", "uni", "EMS403U Studio Practice", "class", "Eng 1.12 Design Studio / Maker Space"],
+  [null, 0, "17:00", "17:20", "travel", "Travel home", "chill", ""],
+  [null, 0, "17:20", "17:40", "chill", "Snack + reset", "chill", ""],
+  [null, 0, "17:40", "19:40", "sk", "Drawing", "draw", ""],
+  [null, 0, "19:40", "20:20", "meal", "Dinner", "meal", ""],
+  [null, 0, "20:20", "21:35", "py", "Python (1 h 15)", "focus", ""],
+  [null, 0, "21:35", "22:10", "chill", "Wind down + pack bag for tomorrow", "chill", ""],
+  [null, 0, "22:10", "22:30", "str", "Stretching", "move", ""],
+  [null, 1, "06:30", "07:00", "chill", "Wake up, wash, dress", "chill", ""],
+  [null, 1, "07:00", "07:20", "meal", "Breakfast", "meal", ""],
+  [null, 1, "07:20", "08:20", "uni", "Study: pre-read EMS430U + EMS412U notes", "focus", ""],
+  [null, 1, "08:20", "08:40", "travel", "Travel to QMUL", "chill", ""],
+  [null, 1, "08:40", "09:00", "travel", "Arrive + settle", "chill", ""],
+  [null, 1, "09:00", "10:00", "uni", "EMS430U Materials", "class", "Bancroft 1.15"],
+  [null, 1, "10:00", "11:00", "uni", "Campus study: EMS430U quiz / EMS412U sheet", "focus", ""],
+  [0, 1, "11:00", "12:00", "uni", "EMS402U", "class", "Engineering 209"],
+  [1, 1, "11:00", "12:00", "uni", "Campus study (Week B, no EMS402U)", "focus", "Library"],
+  [null, 1, "12:00", "13:00", "uni", "EMS412U", "class", "Bancroft: David Sizer LT"],
+  [null, 1, "13:00", "14:00", "meal", "Lunch", "meal", ""],
+  [null, 1, "14:00", "16:00", "uni", "EMS403U Studio Practice", "class", "Eng 1.12 Design Studio / Maker Space"],
+  [null, 1, "16:00", "18:00", "uni", "EMS402U Engineering Design", "class", "Bancroft 1.15A"],
+  [null, 1, "18:00", "18:20", "travel", "Travel home", "chill", ""],
+  [null, 1, "18:20", "19:00", "meal", "Dinner", "meal", ""],
+  [null, 1, "19:00", "21:00", "sk", "Drawing", "draw", ""],
+  [null, 1, "21:00", "22:10", "chill", "Free time + wind down", "chill", ""],
+  [null, 1, "22:10", "22:30", "str", "Stretching", "move", ""],
+  [null, 2, "06:30", "07:00", "chill", "Wake up, wash, dress", "chill", ""],
+  [null, 2, "07:00", "07:20", "meal", "Breakfast", "meal", ""],
+  [null, 2, "07:20", "09:20", "uni", "Study: EMS412U Python (JupyterHub tutorial + exercise pack)", "focus", ""],
+  [null, 2, "09:20", "09:35", "chill", "Break", "chill", ""],
+  [null, 2, "09:35", "11:45", "uni", "Study: EMS402U research log + CAD practice", "focus", ""],
+  [null, 2, "11:45", "12:30", "meal", "Lunch", "meal", ""],
+  [null, 2, "12:30", "12:50", "travel", "Travel to QMUL", "chill", ""],
+  [null, 2, "12:50", "13:00", "travel", "Arrive + settle", "chill", ""],
+  [null, 2, "13:00", "15:00", "uni", "EMS402U SEMS lecture", "class", "iQ East Court (Scape) 0.14"],
+  [null, 2, "15:00", "15:20", "travel", "Travel home", "chill", ""],
+  [null, 2, "15:20", "15:40", "chill", "Snack + reset", "chill", ""],
+  [null, 2, "15:40", "17:40", "sk", "Drawing", "draw", ""],
+  [null, 2, "17:40", "19:10", "gym", "Gym", "move", ""],
+  [null, 2, "19:10", "19:50", "meal", "Dinner", "meal", ""],
+  [null, 2, "19:50", "21:50", "py", "Python (2 h)", "focus", ""],
+  [null, 2, "21:50", "22:10", "chill", "Wind down", "chill", ""],
+  [null, 2, "22:10", "22:30", "str", "Stretching", "move", ""],
+  [null, 3, "06:30", "07:00", "chill", "Wake up, wash, dress", "chill", ""],
+  [null, 3, "07:00", "07:20", "meal", "Breakfast", "meal", ""],
+  [0, 3, "07:20", "09:20", "uni", "Study: EMS402U CAD practice (Ansys, then SolidWorks)", "focus", ""],
+  [1, 3, "07:20", "08:20", "uni", "Study: EMS402U CAD practice", "focus", ""],
+  [1, 3, "08:20", "08:40", "travel", "Travel to QMUL", "chill", ""],
+  [1, 3, "08:40", "09:00", "travel", "Arrive + settle", "chill", ""],
+  [1, 3, "09:00", "13:00", "uni", "EMS402U Maker Space (Week B from 29 Oct)", "class", "Eng: Maker Space"],
+  [0, 3, "09:20", "09:35", "chill", "Break", "chill", ""],
+  [0, 3, "09:35", "11:45", "uni", "Study: EMS412U maths sheet (mark it after solutions drop at 11:00)", "focus", ""],
+  [0, 3, "11:45", "12:30", "meal", "Lunch", "meal", ""],
+  [0, 3, "12:30", "13:30", "uni", "Study: EMS403U sketchbook / studio prep", "focus", ""],
+  [1, 3, "13:00", "14:00", "meal", "Lunch on campus", "meal", ""],
+  [0, 3, "13:30", "13:50", "travel", "Travel to QMUL", "chill", ""],
+  [0, 3, "13:50", "14:00", "travel", "Arrive + settle", "chill", ""],
+  [null, 3, "14:00", "15:00", "uni", "EMS412U", "class", "Room TBC on QMplus (may be online)"],
+  [null, 3, "15:00", "15:20", "travel", "Travel home", "chill", ""],
+  [null, 3, "15:20", "15:40", "chill", "Snack + reset", "chill", ""],
+  [null, 3, "15:40", "17:40", "sk", "Drawing", "draw", ""],
+  [null, 3, "17:40", "18:00", "chill", "Break / walk", "chill", ""],
+  [null, 3, "18:00", "18:40", "meal", "Dinner", "meal", ""],
+  [null, 3, "18:40", "21:10", "ml", "ML / Maths (2 h 30, 10-min break at 19:55)", "focus", ""],
+  [null, 3, "21:10", "22:10", "chill", "Free time + wind down", "chill", ""],
+  [null, 3, "22:10", "22:30", "str", "Stretching", "move", ""],
+  [null, 4, "06:30", "07:00", "chill", "Wake up, wash, dress", "chill", ""],
+  [null, 4, "07:00", "07:20", "meal", "Breakfast", "meal", ""],
+  [null, 4, "07:20", "09:20", "uni", "Study: EMS430U weekly notes + MCQ practice", "focus", ""],
+  [null, 4, "09:20", "09:35", "chill", "Break", "chill", ""],
+  [null, 4, "09:35", "11:45", "uni", "Study: weekly mixed test + update the Course Tracker", "focus", ""],
+  [null, 4, "11:45", "12:30", "meal", "Lunch", "meal", ""],
+  [null, 4, "12:30", "12:50", "travel", "Travel to QMUL", "chill", ""],
+  [null, 4, "12:50", "13:00", "travel", "Arrive + settle", "chill", ""],
+  [null, 4, "13:00", "14:00", "uni", "EMS412U", "class", "Bancroft 1.15A"],
+  [null, 4, "14:00", "14:20", "travel", "Travel home", "chill", ""],
+  [null, 4, "14:20", "14:40", "chill", "Snack + reset", "chill", ""],
+  [null, 4, "14:40", "16:40", "sk", "Drawing", "draw", ""],
+  [null, 4, "16:40", "18:10", "gym", "Gym", "move", ""],
+  [null, 4, "18:10", "18:50", "meal", "Dinner", "meal", ""],
+  [null, 4, "18:50", "20:20", "ml", "ML / Maths (1 h 30)", "focus", ""],
+  [null, 4, "20:20", "22:10", "chill", "Free evening", "chill", ""],
+  [null, 4, "22:10", "22:30", "str", "Stretching", "move", ""],
+  [null, 5, "07:30", "08:00", "chill", "Wake up", "chill", ""],
+  [null, 5, "08:00", "08:30", "meal", "Breakfast", "meal", ""],
+  [null, 5, "08:30", "10:00", "gym", "Gym", "move", ""],
+  [null, 5, "10:00", "10:30", "chill", "Shower + snack", "chill", ""],
+  [null, 5, "10:30", "12:30", "sk", "Drawing", "draw", ""],
+  [null, 5, "12:30", "13:15", "meal", "Lunch", "meal", ""],
+  [null, 5, "13:15", "15:15", "uni", "weekly catch-up", "focus", ""],
+  [null, 5, "15:15", "15:45", "chill", "Break", "chill", ""],
+  [null, 5, "15:45", "17:45", "py", "Python build (2 h)", "focus", ""],
+  [null, 5, "17:45", "22:30", "chill", "Free evening (incl. dinner)", "chill", ""],
+  [null, 5, "22:30", "22:40", "chill", "Wind down", "chill", ""],
+  [null, 5, "22:40", "23:00", "str", "Stretching", "move", ""],
+  [null, 6, "07:30", "08:00", "chill", "Wake up", "chill", ""],
+  [null, 6, "08:00", "09:00", "meal", "Slow breakfast", "meal", ""],
+  [null, 6, "09:00", "11:00", "sk", "Drawing", "draw", ""],
+  [null, 6, "11:00", "11:30", "git", "Weekly review + git push", "focus", ""],
+  [null, 6, "11:30", "13:00", "ml", "ML maths (1 h 30)", "focus", ""],
+  [null, 6, "13:00", "14:00", "meal", "Lunch", "meal", ""],
+  [null, 6, "14:00", "17:00", "chill", "Free / rest", "chill", ""],
+  [null, 6, "17:00", "18:00", "uni", "prep the week", "focus", ""],
+  [null, 6, "18:00", "18:45", "meal", "Dinner", "meal", ""],
+  [null, 6, "18:45", "22:00", "chill", "Free evening", "chill", ""],
+  [null, 6, "22:00", "22:10", "chill", "Wind down + pack bag for Monday", "chill", ""],
+  [null, 6, "22:10", "22:30", "str", "Stretching", "move", ""],
+];
+
 function seedBlocks(){
-  const B=[];
-  const push=(w,d,s,e,tag,lab,ty)=>B.push({w,d,s,e,tag,lab,ty});
-  const gymDays=[0,1,2,4,5];
-
-  // main subject for each day, alternating week A (0) / week B (1)
-  const MAIN={
-    0:{0:"py",1:"c",2:"cpp",3:"ml",4:"py",5:"c",6:"cpp"},
-    1:{0:"ml",1:"py",2:"c",3:"cpp",4:"ml",5:"py",6:"c"}
-  };
-  // supplementary add-on (same every week) — Design & Git, ~2h/week each
-  const ADDON={1:"dsn",2:"git",4:"dsn",5:"git"};
-
-  gymDays.forEach(d=>{
-    const hasAddon=!!ADDON[d];
-    push(null,d,"06:00","08:00","gym","Gym / Run","move");
-    push(null,d,"08:00","08:45","meal","Breakfast","meal");
-    if(d===5)push(null,d,"08:45","09:45","sk","Morning drawing","draw");
-    push(null,d,"12:15","13:15","meal","Lunch","meal");
-    if(hasAddon)push(null,d,"15:15","16:15",ADDON[d],TAGS[ADDON[d]].name,"focus");
-    push(null,d,"16:15","17:15","sk","Drawing","draw");
-    push(null,d,"17:30","18:30","meal","Dinner","meal");
-    push(null,d,"18:30","20:00","chill","Chill / stretch / extra","chill");
-    [0,1].forEach(w=>{
-      const tag=MAIN[w][d],nm=TAGS[tag].name;
-      push(w,d,d===5?"09:45":"08:45","10:30",tag,nm,"focus");
-      push(w,d,"10:30","12:15",tag,nm,"focus");
-      if(hasAddon){
-        push(w,d,"13:15","15:15",tag,nm,"focus");
-      }else{
-        push(w,d,"13:15","14:45",tag,nm,"focus");
-        push(w,d,"14:45","16:15",tag,nm,"focus");
-      }
-      push(w,d,"17:15","17:30",tag,nm,"focus");
-    });
-  });
-
-  // Thursday — no gym, full study day
-  push(null,3,"07:15","08:00","meal","Breakfast","meal");
-  push(null,3,"11:30","12:30","meal","Lunch","meal");
-  push(null,3,"16:15","17:15","sk","Drawing","draw");
-  push(null,3,"17:30","18:30","meal","Dinner","meal");
-  push(null,3,"18:30","20:00","chill","Chill / stretch / extra","chill");
-  [0,1].forEach(w=>{
-    const tag=MAIN[w][3],nm=TAGS[tag].name;
-    push(w,3,"06:00","07:15",tag,nm,"focus");
-    push(w,3,"08:00","09:45",tag,nm,"focus");
-    push(w,3,"09:45","11:30",tag,nm,"focus");
-    push(w,3,"12:30","14:15",tag,nm,"focus");
-    push(w,3,"14:15","16:15",tag,nm,"focus");
-    push(w,3,"17:15","17:30",tag,nm,"focus");
-  });
-
-  // Sunday — no gym
-  push(null,6,"07:15","08:00","meal","Breakfast","meal");
-  push(null,6,"08:00","09:00","sk","Morning drawing","draw");
-  push(null,6,"12:00","13:00","meal","Lunch","meal");
-  push(null,6,"16:15","17:15","sk","Drawing","draw");
-  push(null,6,"17:30","18:30","meal","Dinner","meal");
-  push(null,6,"18:30","20:00","chill","Chill / stretch / extra","chill");
-  [0,1].forEach(w=>{
-    const tag=MAIN[w][6],nm=TAGS[tag].name;
-    push(w,6,"06:00","07:15",tag,nm,"focus");
-    push(w,6,"09:00","10:00",tag,nm,"focus");
-    push(w,6,"10:00","12:00",tag,nm,"focus");
-    push(w,6,"13:00","14:45",tag,nm,"focus");
-    push(w,6,"14:45","16:15",tag,nm,"focus");
-    push(w,6,"17:15","17:30",tag,nm,"focus");
-  });
-
-  return B.map((b,i)=>Object.assign({id:"b"+i},b));
+  return SEED.map((r,i)=>({id:"b"+i,w:r[0],d:r[1],s:r[2],e:r[3],tag:r[4],lab:r[5],ty:r[6],loc:r[7]||""}));
 }
 
-function ensureWeekendDrawing(blocks){
-  if(!blocks.some(b=>b.d===5&&b.lab==="Morning drawing")){
-    blocks.filter(b=>b.d===5&&b.s==="08:45"&&b.e==="10:30"&&b.ty==="focus").forEach(b=>b.s="09:45");
-    blocks.push({id:"weekend-draw-5",w:null,d:5,s:"08:45",e:"09:45",tag:"sk",lab:"Morning drawing",ty:"draw"});
-  }
-  if(!blocks.some(b=>b.d===6&&b.lab==="Morning drawing")){
-    blocks.filter(b=>b.d===6&&b.s==="08:00"&&b.e==="10:00"&&b.ty==="focus").forEach(b=>b.s="09:00");
-    blocks.push({id:"weekend-draw-6",w:null,d:6,s:"08:00",e:"09:00",tag:"sk",lab:"Morning drawing",ty:"draw"});
-  }
-  return blocks;
-}
+/* one-off date notes, shown above that day when viewing the current week */
+const DATE_NOTES={
+  "2026-10-09":"EMS402U W3 team-choice questionnaire due today.",
+  "2026-10-15":"QMplus shows no Maker Space session this Thursday.",
+  "2026-10-18":"EMS403U Project 1.1 QMplus submission due today (no submission = 0).",
+  "2026-10-19":"EMS403U Project 1.1 presentations today or tomorrow: no slides.",
+  "2026-10-20":"EMS403U Project 1.1 presentations (if not yesterday).",
+  "2026-11-02":"Week 7: no timetabled teaching. Use class slots for mid-term revision; museum visit for EMS403U.",
+  "2026-11-03":"Week 7: no timetabled teaching.",
+  "2026-11-04":"Week 7: no timetabled teaching. The module page lists the EMS430U mid-term as 4 Nov (provisional): check QMplus.",
+  "2026-11-05":"Week 7: no timetabled teaching.",
+  "2026-11-06":"EMS430U MID-TERM (40%), in person, ends 13:00. Printed notes only. EMS412U reflective assignment due 17:00.",
+  "2026-12-01":"EMS412U Python coursework opens on JupyterHub.",
+  "2026-12-08":"EMS412U Python coursework due 17:00 (40%).",
+  "2026-12-15":"EMS402U project report due (100%). No AI."
+};
 
 /* ---- state ---- */
-const KEY="timetable_app_v5", OLDS=["cc_app_v4","cc_app_v3","cc_app_v2","cc_sched_v1"];
+const KEY="timetable_app_v6", OLDS=["timetable_app_v5","cc_app_v4","cc_app_v3","cc_app_v2","cc_sched_v1"];
 let S={view:"timetable",day:todayIdx(),week:weekParity(),blocks:seedBlocks(),workDays:{},done:{},sessions:[],tag:"py",preset:50,mode:"focus"};
 function load(){
   try{
     const r=localStorage.getItem(KEY);
     if(r){ const p=JSON.parse(r);
-      if(p.blocks&&p.blocks.length)S.blocks=ensureWeekendDrawing(p.blocks);
+      if(p.blocks&&p.blocks.length)S.blocks=p.blocks;
       S.workDays=p.workDays||{}; S.done=p.done||{}; S.sessions=p.sessions||[]; S.tag=p.tag||"py"; S.preset=p.preset||50; S.view=p.view||"timetable";
       S.week=weekParity();
       save();
@@ -385,9 +454,9 @@ function load(){
     for(let i=0;i<OLDS.length;i++){            // migrate schedule and logged time from an older version
       const old=localStorage.getItem(OLDS[i]);
       if(old){ const p=JSON.parse(old);
-        if(p.blocks&&p.blocks.length)S.blocks=ensureWeekendDrawing(p.blocks);
+        // keep logged time and settings; the schedule itself moves to the new default week
         S.sessions=(p.sessions||[]).map(x=>Object.assign({id:uid(),src:"timer",note:""},x));
-        S.workDays=p.workDays||{}; S.done=p.done||{}; S.tag=p.tag||"py"; S.preset=p.preset||50; S.view=p.view||"timetable";
+        S.tag=p.tag||"py"; S.preset=p.preset||50; S.view=p.view||"timetable";
         save(); break; }
     }
   }catch(e){}
@@ -419,12 +488,21 @@ function regularDayBlocks(day,week){
   return S.blocks.filter(b=>b.d===day&&(b.w==null||b.w===week)).sort((a,b)=>mins(a.s)-mins(b.s));
 }
 function workDayBlocks(day){
+  const v=(k,s,e,tag,lab,ty,note)=>({id:"work-"+k+"-"+day,d:day,w:null,s,e,tag,lab,ty,loc:note||"",virtual:true});
   return [
-    {id:"work-"+day,d:day,w:null,s:"06:00",e:"15:30",tag:"work",lab:"Work / commute",ty:"work",virtual:true},
-    {id:"work-reset-"+day,d:day,w:null,s:"15:30",e:"16:30",tag:"chill",lab:"Travel / reset",ty:"chill",virtual:true},
-    {id:"work-gym-"+day,d:day,w:null,s:"16:30",e:"18:30",tag:"gym",lab:"Gym / Run",ty:"move",virtual:true},
-    {id:"work-dinner-"+day,d:day,w:null,s:"18:30",e:"19:30",tag:"meal",lab:"Dinner",ty:"meal",virtual:true},
-    {id:"work-evening-"+day,d:day,w:null,s:"19:30",e:"21:00",tag:"chill",lab:"Chill / stretch / extra",ty:"chill",virtual:true}
+    v("wake","06:30","06:50","chill","Wake up, wash, dress","chill"),
+    v("bfast","06:50","07:10","meal","Breakfast","meal"),
+    v("in","07:10","07:50","travel","Commute to work","chill","adjust to the site"),
+    v("shift","07:50","15:30","work","Work shift (Zen Educate / GES)","work"),
+    v("out","15:30","16:10","travel","Commute home","chill"),
+    v("reset","16:10","16:30","chill","Snack + reset","chill"),
+    v("draw","16:30","18:30","sk","Drawing","draw"),
+    v("dinner","18:30","19:10","meal","Dinner","meal"),
+    v("uni","19:10","20:10","uni","Uni catch-up: what you missed today","focus"),
+    v("brk","20:10","20:20","chill","Break","chill"),
+    v("learn","20:20","21:20","py","Secondary learning (optional)","focus"),
+    v("free","21:20","22:10","chill","Free time + wind down","chill"),
+    v("str","22:10","22:30","str","Stretching","move")
   ];
 }
 function effectiveDayBlocks(day,week){
@@ -482,13 +560,14 @@ function renderTimetable(){
   const study=blocks.filter(b=>STUDY.indexOf(b.tag)>=0).reduce((a,b)=>a+dur(b.s,b.e),0);
   const isWork=S.day<5&&!!S.workDays[S.day], dayEnd=blocks.length?blocks[blocks.length-1].e:"—";
   h+=`<div class="dayhdr"><div class="t">${DAY_FULL[S.day]}${S.day===today?" · today":""}</div><div class="d">${isWork?"work day · ends "+dayEnd:fmtDur(study)+" study"}</div></div>`;
+  if(S.week===curWeek&&DATE_NOTES[date])h+=`<div class="datenote">${esc(DATE_NOTES[date])}</div>`;
   if(S.day<5){
     h+=`<div class="daymode"><div class="daymode-copy"><div class="daymode-title">Day type</div>
-      <div class="daymode-note">${isWork?"Work 06:00–15:30 · travel/reset 15:30 · gym 16:30 · no drawing on work days":"Use the normal study plan, or switch this day when you have work"}</div></div>
+      <div class="daymode-note">${isWork?"Shift 07:50–15:30 · drawing 16:30 · 1h uni catch-up 19:10 · stretch 22:10. Gym day? Move it to Thu or Sun.":"Uni day built around your QMplus classes. Switch if you take a shift (Wed–Fri are lightest)."}</div></div>
       <div class="daymode-actions"><button class="modebtn ${isWork?"":"active"}" data-work-mode="study" aria-pressed="${isWork?"false":"true"}">Study day</button>
       <button class="modebtn ${isWork?"active":""}" data-work-mode="work" aria-pressed="${isWork?"true":"false"}">Work day</button></div></div>`;
   }else{
-    h+=`<div class="daymode fixedmode"><div class="daymode-copy"><div class="daymode-title">Weekend drawing</div><div class="daymode-note">Saturday and Sunday include one extra hour of drawing in the morning.</div></div></div>`;
+    h+=`<div class="daymode fixedmode"><div class="daymode-copy"><div class="daymode-title">Weekend</div><div class="daymode-note">${S.day===5?"Gym, drawing, 2h uni catch-up and a 2h Python build session.":"Drawing, weekly review + git push, ML maths, then prep the week."}</div></div></div>`;
   }
 
   blocks.forEach(b=>{
@@ -497,7 +576,7 @@ function renderTimetable(){
       <div class="accent"></div>
       <div class="body" ${b.virtual?"":'data-edit="'+b.id+'"'}>
         <div class="time">${b.s}–${b.e}<span class="dur">${fmtDur(dur(b.s,b.e))}</span></div>
-        <div class="main"><div class="lab">${esc(b.lab)}</div><div class="ty">${TYPE_LABEL[b.ty]||""}</div></div>
+        <div class="main"><div class="lab">${esc(b.lab)}</div><div class="ty">${TYPE_LABEL[b.ty]||""}${b.loc?" · "+esc(b.loc):""}</div></div>
       </div>
       <div class="blk-actions">
         <button class="blk-btn chk" data-toggle="${b.id}" aria-label="Mark done">${done?"✓":"○"}</button>
@@ -623,11 +702,11 @@ let editing=null;
 function tagOpts(sel){ return Object.keys(TAGS).map(k=>`<option value="${k}" ${k===sel?"selected":""}>${TAGS[k].name}</option>`).join(""); }
 function openEdit(id){ editing=id; const b=S.blocks.find(z=>z.id===id); if(!b)return;
   $("#mTitle").textContent="Edit block"; $("#mDelete").style.display="";
-  $("#mStart").value=b.s; $("#mEnd").value=b.e; $("#mLabel").value=b.lab;
+  $("#mStart").value=b.s; $("#mEnd").value=b.e; $("#mLabel").value=b.lab; $("#mLoc").value=b.loc||"";
   $("#mTag").innerHTML=tagOpts(b.tag); $("#mType").value=b.ty; $("#mWeek").value=b.w==null?"":String(b.w);
   $("#ov").classList.add("show"); }
 function openAdd(){ editing=null; $("#mTitle").textContent="Add block · "+DAY_FULL[S.day]; $("#mDelete").style.display="none";
-  $("#mStart").value="09:00"; $("#mEnd").value="10:30"; $("#mLabel").value="";
+  $("#mStart").value="09:00"; $("#mEnd").value="10:30"; $("#mLabel").value=""; $("#mLoc").value="";
   $("#mTag").innerHTML=tagOpts("py"); $("#mType").value="focus"; $("#mWeek").value=String(S.week);
   $("#ov").classList.add("show"); }
 function closeModal(){ $("#ov").classList.remove("show"); }
@@ -635,9 +714,9 @@ function saveModal(){
   const s=$("#mStart").value||"09:00", e=$("#mEnd").value||"10:00";
   const tag=$("#mTag").value, ty=$("#mType").value;
   const lab=($("#mLabel").value||"").trim()||TAGS[tag].name;
-  const wv=$("#mWeek").value, w=wv===""?null:+wv;
-  if(editing){ const b=S.blocks.find(z=>z.id===editing); if(b)Object.assign(b,{s,e,lab,tag,ty,w}); }
-  else S.blocks.push({id:"b"+Date.now()+Math.floor(Math.random()*99),d:S.day,w,s,e,lab,tag,ty});
+  const wv=$("#mWeek").value, w=wv===""?null:+wv, loc=($("#mLoc").value||"").trim();
+  if(editing){ const b=S.blocks.find(z=>z.id===editing); if(b)Object.assign(b,{s,e,lab,tag,ty,w,loc}); }
+  else S.blocks.push({id:"b"+Date.now()+Math.floor(Math.random()*99),d:S.day,w,s,e,lab,tag,ty,loc});
   save(); closeModal(); render();
 }
 function delBlock(){ if(!editing)return; S.blocks=S.blocks.filter(z=>z.id!==editing); save(); closeModal(); render(); }
